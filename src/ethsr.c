@@ -10,7 +10,7 @@
 
 int main (int argc, char **argv) 
 {
-  char *iname = "eth1";
+  char *iname = "tap0";
   int ttl = 60;
   int sockfd;
   struct ifreq if_idx;
@@ -23,6 +23,23 @@ int main (int argc, char **argv)
   struct iphdr *iph = (struct iphdr *) (sendbuf + sizeof(struct ether_header));
   struct udphdr *udph = (struct udphdr *) (sendbuf + sizeof(struct iphdr) + sizeof(struct ether_header));
   struct sockaddr_ll socket_address;
+
+  /*init destination address for tap0
+  ((uint8_t *)&d_mac.ifr_hwaddr.sa_data)[0] = 0x66;
+  ((uint8_t *)&d_mac.ifr_hwaddr.sa_data)[1] = 0x4a;
+  ((uint8_t *)&d_mac.ifr_hwaddr.sa_data)[2] = 0xb8;
+  ((uint8_t *)&d_mac.ifr_hwaddr.sa_data)[3] = 0x50;
+  ((uint8_t *)&d_mac.ifr_hwaddr.sa_data)[4] = 0x0d;
+  ((uint8_t *)&d_mac.ifr_hwaddr.sa_data)[5] = 0xf9;*/
+
+  /*init destination address for tap1*/
+  ((uint8_t *)&d_mac.ifr_hwaddr.sa_data)[0] = 0xce;
+  ((uint8_t *)&d_mac.ifr_hwaddr.sa_data)[1] = 0xc3;
+  ((uint8_t *)&d_mac.ifr_hwaddr.sa_data)[2] = 0x25;
+  ((uint8_t *)&d_mac.ifr_hwaddr.sa_data)[3] = 0x83;
+  ((uint8_t *)&d_mac.ifr_hwaddr.sa_data)[4] = 0x3b;
+  ((uint8_t *)&d_mac.ifr_hwaddr.sa_data)[5] = 0x36;
+
 
   printf ("\nethsr beg\n");
 
@@ -63,11 +80,11 @@ int main (int argc, char **argv)
   eh->ether_shost[4] = ((uint8_t *)&if_mac.ifr_hwaddr.sa_data)[4];
   eh->ether_shost[5] = ((uint8_t *)&if_mac.ifr_hwaddr.sa_data)[5];
   eh->ether_dhost[0] = ((uint8_t *)&d_mac.ifr_hwaddr.sa_data)[0];
-  eh->ether_dhost[1] = ((uint8_t *)&d_mac.ifr_hwaddr.sa_data)[0];
-  eh->ether_dhost[2] = ((uint8_t *)&d_mac.ifr_hwaddr.sa_data)[0];
-  eh->ether_dhost[3] = ((uint8_t *)&d_mac.ifr_hwaddr.sa_data)[0];
-  eh->ether_dhost[4] = ((uint8_t *)&d_mac.ifr_hwaddr.sa_data)[0];
-  eh->ether_dhost[5] = ((uint8_t *)&d_mac.ifr_hwaddr.sa_data)[0];
+  eh->ether_dhost[1] = ((uint8_t *)&d_mac.ifr_hwaddr.sa_data)[1];
+  eh->ether_dhost[2] = ((uint8_t *)&d_mac.ifr_hwaddr.sa_data)[2];
+  eh->ether_dhost[3] = ((uint8_t *)&d_mac.ifr_hwaddr.sa_data)[3];
+  eh->ether_dhost[4] = ((uint8_t *)&d_mac.ifr_hwaddr.sa_data)[4];
+  eh->ether_dhost[5] = ((uint8_t *)&d_mac.ifr_hwaddr.sa_data)[5];
   eh->ether_type = htons(ETH_P_IP);
   tx_len += sizeof(struct ether_header);
 

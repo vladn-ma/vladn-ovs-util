@@ -8,8 +8,8 @@
   ethsr program send and receive file to the interface both given by command line
 */
 
-#ifndef ethsr_h__DEFINED
-#define ethsr_h__DEFINED
+#ifndef __ethsr_h__DEFINED__
+#define __ethsr_h__DEFINED__
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -25,4 +25,4 @@
 #include <netinet/ether.h>
 unsigned short csum(unsigned short *buf, int nwords);
 
-#endif /*ethsr_h__DEFINED*/
+#endif /*__ethsr_h__DEFINED__*/
