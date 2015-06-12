@@ -10,6 +10,7 @@
 #define __progparams_h___DEFINED__
 
 #include <assert.h>
+#include <stdio.h>
 
 #define BOOL int
 #define TRUE 1
@@ -17,19 +18,17 @@
 #define OK 1
 
 typedef struct params__ {
-  BOOL m_print_version, m_print_help;
-
-  char
-  m_pname[256], /*program name*/
-  m_if_str[256],/*name of the interface*/
-  unsigned char m_dmac[6] /*string with mac address of destanation to send*/
-  ;
-
+  BOOL m_print_version; /*need to print out program version*/
+  BOOL m_print_help; /*need to print out program help*/
+  char m_pname[256]; /*program name*/
+  char m_if_str[256];/*name of the interface*/
+  char m_dmac_str[256];/*string with mac address of destanation to send*/
+  unsigned char m_dmac[6]; /*dmac as an array*/
 } params;
 
 /* standard class static functions */
 params* params__alloc (void);
-int params__test (int argc, char **argv);
+void params__test (int argc, char **argv);
 
 /*standard class member funcitons*/
 params *params__init (params* _p, int _argc, char **_argv);

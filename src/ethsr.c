@@ -10,7 +10,7 @@
 
 int main (int argc, char **argv) 
 {
-  char *iname = "tap0";
+  char *iname = "tap11";
   int ttl = 60;
   int sockfd;
   struct ifreq if_idx;
@@ -33,12 +33,12 @@ int main (int argc, char **argv)
   ((uint8_t *)&d_mac.ifr_hwaddr.sa_data)[5] = 0xf9;*/
 
   /*init destination address for tap1*/
-  ((uint8_t *)&d_mac.ifr_hwaddr.sa_data)[0] = 0xce;
-  ((uint8_t *)&d_mac.ifr_hwaddr.sa_data)[1] = 0xc3;
-  ((uint8_t *)&d_mac.ifr_hwaddr.sa_data)[2] = 0x25;
-  ((uint8_t *)&d_mac.ifr_hwaddr.sa_data)[3] = 0x83;
-  ((uint8_t *)&d_mac.ifr_hwaddr.sa_data)[4] = 0x3b;
-  ((uint8_t *)&d_mac.ifr_hwaddr.sa_data)[5] = 0x36;
+  ((uint8_t *)&d_mac.ifr_hwaddr.sa_data)[0] = 0xd2;
+  ((uint8_t *)&d_mac.ifr_hwaddr.sa_data)[1] = 0x53;
+  ((uint8_t *)&d_mac.ifr_hwaddr.sa_data)[2] = 0x67;
+  ((uint8_t *)&d_mac.ifr_hwaddr.sa_data)[3] = 0x49;
+  ((uint8_t *)&d_mac.ifr_hwaddr.sa_data)[4] = 0xd8;
+  ((uint8_t *)&d_mac.ifr_hwaddr.sa_data)[5] = 0x61;
 
 
   printf ("\nethsr beg\n");
