@@ -7,10 +7,11 @@
 */
 
 #include "ethsr.h"
+#include "params.h"
 
 int main (int argc, char **argv) 
 {
-  char *iname = "tap11";
+  char *iname;
   int ttl = 60;
   int sockfd;
   struct ifreq if_idx;
@@ -23,16 +24,26 @@ int main (int argc, char **argv)
   struct iphdr *iph = (struct iphdr *) (sendbuf + sizeof(struct ether_header));
   struct udphdr *udph = (struct udphdr *) (sendbuf + sizeof(struct iphdr) + sizeof(struct ether_header));
   struct sockaddr_ll socket_address;
+  params par;
 
-  /*init destination address for tap0
-  ((uint8_t *)&d_mac.ifr_hwaddr.sa_data)[0] = 0x66;
-  ((uint8_t *)&d_mac.ifr_hwaddr.sa_data)[1] = 0x4a;
-  ((uint8_t *)&d_mac.ifr_hwaddr.sa_data)[2] = 0xb8;
-  ((uint8_t *)&d_mac.ifr_hwaddr.sa_data)[3] = 0x50;
-  ((uint8_t *)&d_mac.ifr_hwaddr.sa_data)[4] = 0x0d;
-  ((uint8_t *)&d_mac.ifr_hwaddr.sa_data)[5] = 0xf9;*/
+  /* params__test (argc, argv); */
+  /* exit (0); */
 
-  /*init destination address for tap1*/
+  params__init (&par, argc, argv);
+
+  if (par.m_print_version == TRUE)
+    params__print_version (&par, stdout);
+
+  if (par.m_print_help == TRUE) {
+    params__print_help (&par, stdout);
+    exit (0);
+  }
+
+  iname = par.m_if_str;
+
+  /* params__info (&par); */
+
+  /*init destination mac address*/
   ((uint8_t *)&d_mac.ifr_hwaddr.sa_data)[0] = 0xd2;
   ((uint8_t *)&d_mac.ifr_hwaddr.sa_data)[1] = 0x53;
   ((uint8_t *)&d_mac.ifr_hwaddr.sa_data)[2] = 0x67;
@@ -132,11 +143,11 @@ int main (int argc, char **argv)
   socket_address.sll_halen = ETH_ALEN;
   /*destination MAC */
   socket_address.sll_addr[0] = ((uint8_t *)&d_mac.ifr_hwaddr.sa_data)[0];
-  socket_address.sll_addr[1] = ((uint8_t *)&d_mac.ifr_hwaddr.sa_data)[0];
-  socket_address.sll_addr[2] = ((uint8_t *)&d_mac.ifr_hwaddr.sa_data)[0];
-  socket_address.sll_addr[3] = ((uint8_t *)&d_mac.ifr_hwaddr.sa_data)[0];
-  socket_address.sll_addr[4] = ((uint8_t *)&d_mac.ifr_hwaddr.sa_data)[0];
-  socket_address.sll_addr[5] = ((uint8_t *)&d_mac.ifr_hwaddr.sa_data)[0];
+  socket_address.sll_addr[1] = ((uint8_t *)&d_mac.ifr_hwaddr.sa_data)[1];
+  socket_address.sll_addr[2] = ((uint8_t *)&d_mac.ifr_hwaddr.sa_data)[2];
+  socket_address.sll_addr[3] = ((uint8_t *)&d_mac.ifr_hwaddr.sa_data)[3];
+  socket_address.sll_addr[4] = ((uint8_t *)&d_mac.ifr_hwaddr.sa_data)[4];
+  socket_address.sll_addr[5] = ((uint8_t *)&d_mac.ifr_hwaddr.sa_data)[5];
 
   /*send packet */
   if (sendto(sockfd, sendbuf, tx_len, 0, (struct sockaddr*)&socket_address, sizeof(struct sockaddr_ll)) < 0) {
