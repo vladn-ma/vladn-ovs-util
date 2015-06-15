@@ -11,6 +11,7 @@
 
 int main (int argc, char **argv) 
 {
+  int i;
   char *iname;
   int ttl = 60;
   int sockfd;
@@ -29,6 +30,7 @@ int main (int argc, char **argv)
   /* exit (0); */
 
   params__init (&par, argc, argv);
+  /* params__info (&par); */ 
 
   if (par.m_print_version == TRUE)
     params__print_version (&par, stdout);
@@ -39,8 +41,6 @@ int main (int argc, char **argv)
   }
 
   iname = par.m_if_str;
-
-   params__info (&par); 
 
   printf ("\nethsr beg\n");
 
@@ -54,6 +54,7 @@ int main (int argc, char **argv)
     perror("SIOCGIFINDEX");
      exit (1);
   }
+  printf ("src interface index = %d\n", if_idx.ifr_ifindex);
 
   /*get the MAC address of the interface to send on*/
   memset(&if_mac, 0, sizeof(struct ifreq));
@@ -62,6 +63,9 @@ int main (int argc, char **argv)
     perror("SIOCGIFHWADDR");
     exit (2);
   }
+  printf ("src interface mac = ");
+  for (i=0; i<4; i++) printf ("%s%x", (i?":":""), ((uint8_t *)&if_mac.ifr_hwaddr.sa_data)[i]);
+  printf ("\n");
 
   /*get the IP address of the interface to send on*/
   memset(&if_ip, 0, sizeof(struct ifreq));
@@ -70,6 +74,7 @@ int main (int argc, char **argv)
     perror("SIOCGIFADDR");
     exit (3);
   }
+  printf ("src interface ip = %s\n", inet_ntoa(((struct sockaddr_in *)&if_ip.ifr_addr)->sin_addr));
 
   /*construct the ethernet header*/
   memset(sendbuf, 0, 1024);
