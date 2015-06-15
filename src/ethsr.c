@@ -16,7 +16,6 @@ int main (int argc, char **argv)
   int sockfd;
   struct ifreq if_idx;
   struct ifreq if_mac;
-  struct ifreq d_mac;
   struct ifreq if_ip;
   int tx_len = 0;
   char sendbuf[1024];
@@ -41,16 +40,7 @@ int main (int argc, char **argv)
 
   iname = par.m_if_str;
 
-  /* params__info (&par); */
-
-  /*init destination mac address*/
-  ((uint8_t *)&d_mac.ifr_hwaddr.sa_data)[0] = 0xd2;
-  ((uint8_t *)&d_mac.ifr_hwaddr.sa_data)[1] = 0x53;
-  ((uint8_t *)&d_mac.ifr_hwaddr.sa_data)[2] = 0x67;
-  ((uint8_t *)&d_mac.ifr_hwaddr.sa_data)[3] = 0x49;
-  ((uint8_t *)&d_mac.ifr_hwaddr.sa_data)[4] = 0xd8;
-  ((uint8_t *)&d_mac.ifr_hwaddr.sa_data)[5] = 0x61;
-
+   params__info (&par); 
 
   printf ("\nethsr beg\n");
 
@@ -84,18 +74,19 @@ int main (int argc, char **argv)
   /*construct the ethernet header*/
   memset(sendbuf, 0, 1024);
   /*ethernet header*/
+  /*init destination mac address 8a:2f:62:17:8c:a3*/
   eh->ether_shost[0] = ((uint8_t *)&if_mac.ifr_hwaddr.sa_data)[0];
   eh->ether_shost[1] = ((uint8_t *)&if_mac.ifr_hwaddr.sa_data)[1];
   eh->ether_shost[2] = ((uint8_t *)&if_mac.ifr_hwaddr.sa_data)[2];
   eh->ether_shost[3] = ((uint8_t *)&if_mac.ifr_hwaddr.sa_data)[3];
   eh->ether_shost[4] = ((uint8_t *)&if_mac.ifr_hwaddr.sa_data)[4];
   eh->ether_shost[5] = ((uint8_t *)&if_mac.ifr_hwaddr.sa_data)[5];
-  eh->ether_dhost[0] = ((uint8_t *)&d_mac.ifr_hwaddr.sa_data)[0];
-  eh->ether_dhost[1] = ((uint8_t *)&d_mac.ifr_hwaddr.sa_data)[1];
-  eh->ether_dhost[2] = ((uint8_t *)&d_mac.ifr_hwaddr.sa_data)[2];
-  eh->ether_dhost[3] = ((uint8_t *)&d_mac.ifr_hwaddr.sa_data)[3];
-  eh->ether_dhost[4] = ((uint8_t *)&d_mac.ifr_hwaddr.sa_data)[4];
-  eh->ether_dhost[5] = ((uint8_t *)&d_mac.ifr_hwaddr.sa_data)[5];
+  eh->ether_dhost[0] = 0x8a;
+  eh->ether_dhost[1] = 0x2f;
+  eh->ether_dhost[2] = 0x62;
+  eh->ether_dhost[3] = 0x17;
+  eh->ether_dhost[4] = 0x8c;
+  eh->ether_dhost[5] = 0xa3;
   eh->ether_type = htons(ETH_P_IP);
   tx_len += sizeof(struct ether_header);
 
@@ -109,15 +100,15 @@ int main (int argc, char **argv)
   iph->protocol = 17; // UDP
   /*source IP address, can be spoofed*/
   iph->saddr = inet_addr(inet_ntoa(((struct sockaddr_in *)&if_ip.ifr_addr)->sin_addr));
-  /* iph->saddr = inet_addr("192.168.0.112");*/
+  /* iph->saddr = inet_addr("10.10.10.11");*/
   /* Destination IP address */
-  iph->daddr = inet_addr("192.168.0.111");
+  iph->daddr = inet_addr("10.10.10.12");
   tx_len += sizeof(struct iphdr);
 
   /*construct the UDP header*/
   /*UDP Header*/
-  udph->source = htons(3423);
-  udph->dest = htons(5342);
+  udph->source = htons(33423);
+  udph->dest = htons(35342);
   udph->check = 0; /*skip*/
   tx_len += sizeof(struct udphdr);
 
@@ -142,12 +133,12 @@ int main (int argc, char **argv)
   /*address length*/
   socket_address.sll_halen = ETH_ALEN;
   /*destination MAC */
-  socket_address.sll_addr[0] = ((uint8_t *)&d_mac.ifr_hwaddr.sa_data)[0];
-  socket_address.sll_addr[1] = ((uint8_t *)&d_mac.ifr_hwaddr.sa_data)[1];
-  socket_address.sll_addr[2] = ((uint8_t *)&d_mac.ifr_hwaddr.sa_data)[2];
-  socket_address.sll_addr[3] = ((uint8_t *)&d_mac.ifr_hwaddr.sa_data)[3];
-  socket_address.sll_addr[4] = ((uint8_t *)&d_mac.ifr_hwaddr.sa_data)[4];
-  socket_address.sll_addr[5] = ((uint8_t *)&d_mac.ifr_hwaddr.sa_data)[5];
+  socket_address.sll_addr[0] = eh->ether_dhost[0];
+  socket_address.sll_addr[1] = eh->ether_dhost[1];
+  socket_address.sll_addr[2] = eh->ether_dhost[2];
+  socket_address.sll_addr[3] = eh->ether_dhost[3];
+  socket_address.sll_addr[4] = eh->ether_dhost[4];
+  socket_address.sll_addr[5] = eh->ether_dhost[5];
 
   /*send packet */
   if (sendto(sockfd, sendbuf, tx_len, 0, (struct sockaddr*)&socket_address, sizeof(struct sockaddr_ll)) < 0) {
