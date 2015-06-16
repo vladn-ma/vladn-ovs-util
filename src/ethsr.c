@@ -79,19 +79,19 @@ int main (int argc, char **argv)
   /*construct the ethernet header*/
   memset(sendbuf, 0, 1024);
   /*ethernet header*/
-  /*init destination mac address 8a:2f:62:17:8c:a3*/
+  /*init destination mac address fa:dc:fe:44:5c:e0*/
   eh->ether_shost[0] = ((uint8_t *)&if_mac.ifr_hwaddr.sa_data)[0];
   eh->ether_shost[1] = ((uint8_t *)&if_mac.ifr_hwaddr.sa_data)[1];
   eh->ether_shost[2] = ((uint8_t *)&if_mac.ifr_hwaddr.sa_data)[2];
   eh->ether_shost[3] = ((uint8_t *)&if_mac.ifr_hwaddr.sa_data)[3];
   eh->ether_shost[4] = ((uint8_t *)&if_mac.ifr_hwaddr.sa_data)[4];
   eh->ether_shost[5] = ((uint8_t *)&if_mac.ifr_hwaddr.sa_data)[5];
-  eh->ether_dhost[0] = 0x8a;
-  eh->ether_dhost[1] = 0x2f;
-  eh->ether_dhost[2] = 0x62;
-  eh->ether_dhost[3] = 0x17;
-  eh->ether_dhost[4] = 0x8c;
-  eh->ether_dhost[5] = 0xa3;
+  eh->ether_dhost[0] = 0xfa;
+  eh->ether_dhost[1] = 0xdc;
+  eh->ether_dhost[2] = 0xfe;
+  eh->ether_dhost[3] = 0x44;
+  eh->ether_dhost[4] = 0x5c;
+  eh->ether_dhost[5] = 0xe0;
   eh->ether_type = htons(ETH_P_IP);
   tx_len += sizeof(struct ether_header);
 
@@ -103,11 +103,12 @@ int main (int argc, char **argv)
   iph->id = htons(54321);
   iph->ttl = ttl; // hops
   iph->protocol = 17; // UDP
+  
   /*source IP address, can be spoofed*/
   iph->saddr = inet_addr(inet_ntoa(((struct sockaddr_in *)&if_ip.ifr_addr)->sin_addr));
-  /* iph->saddr = inet_addr("10.10.10.11");*/
+
   /* Destination IP address */
-  iph->daddr = inet_addr("10.10.10.12");
+  iph->daddr = inet_addr("11.10.10.12");
   tx_len += sizeof(struct iphdr);
 
   /*construct the UDP header*/
