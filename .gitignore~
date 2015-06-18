@@ -31,7 +31,11 @@
 
 # Debug files
 *.dSYM/
+<<<<<<< HEAD
 Debug/
+=======
+Debug/[^*]
+>>>>>>> vladn-dev
 
 # CScope files
 *.files
