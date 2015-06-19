@@ -9,25 +9,22 @@
 #ifndef __progparams_h___DEFINED__
 #define __progparams_h___DEFINED__
 
-#include <assert.h>
-#include <stdio.h>
-
-#define BOOL int
-#define TRUE 1
-#define FALSE 0
-#define OK 1
+#include <stdint.h>
+#include <stdbool.h>
+#include <netinet/in.h>
 
 typedef struct params__ {
-  BOOL m_print_version; /*need to print out program version*/
-  BOOL m_print_help; /*need to print out program help*/
+  char m_cmd[64];
   char m_pname[256]; /*program name*/
-  char m_if_str[32];/*name of the interface*/
-  char m_dmac_str[32];/*string with mac address of destanation to send*/
-  unsigned char m_dmac[6]; /*dmac as an array*/
-  char m_dip_str[32]; /*string with ip address of destanation to send*/
-  unsigned char m_dip[4]; /*dip as an array*/
-  char m_file[256]; /*program namename of file to send ad hex dump*/
-  int m_ipttl; /*ip time to live parameter*/
+  char m_iname[32];  /*name of the interface*/
+  bool m_smac_cmd;
+  uint8_t m_smac[6];
+  bool m_dmac_cmd;
+  uint8_t m_dmac[6];
+  bool m_sip_cmd;
+  struct in_addr m_sip; 
+  bool m_dip_cmd;
+  struct in_addr m_dip;
 } params;
 
 /* standard class static functions */
@@ -41,8 +38,8 @@ void params__free (params* _p);
 void params__info (params *_p);
 
 /* class specific member functions */
-void params__print_version (params *_p, FILE *_fh);
-void params__print_help (params *_p, FILE *_fh);
+void params__print_version (params *_p);
+void params__print_help (params *_p);
 
 #endif /* __progparams_h___DEFINED__ */
 

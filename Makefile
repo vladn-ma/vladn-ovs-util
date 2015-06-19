@@ -13,7 +13,7 @@ TGZDIR	  := $(BUILDDIR)
 RUNDIR	  := .
 MKDIR_P   := mkdir -p
 
-TARGET    := ethsr
+TARGET    := pex
 TGZ	      := $(TARGET).tgz
 SRCS      := $(notdir $(wildcard $(SRCDIR)/*.c))
 OBJS      := $(patsubst %.c,%.o, $(SRCS))
