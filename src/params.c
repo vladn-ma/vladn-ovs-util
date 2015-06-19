@@ -173,6 +173,7 @@ void params__info (params *_p)
   printf ("\n_p->m_sip      = %s", inet_ntoa(_p->m_sip));
   printf ("\n_p->m_dip_cmd  = %s", ((_p->m_dip_cmd==true)?"true":"false"));
   printf ("\n_p->m_dip      = %s", inet_ntoa(_p->m_dip));
+  printf ("\n");
 }
 
 void params__test (int _argc, char **_argv)

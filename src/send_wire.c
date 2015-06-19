@@ -85,6 +85,8 @@ void send_wire (params *_par)
     socket_address.sll_halen = ETH_ALEN;
     for (i=0; i< sizeof (_par->m_dmac); i++) socket_address.sll_addr[i] = _par->m_dmac[i];
 
+    params__info (_par);
+
     /*send packet */
     if (sendto(
 	       sockfd,
