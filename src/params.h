@@ -14,8 +14,8 @@
 #include <netinet/in.h>
 
 typedef struct params__ {
-  char m_cmd[64];
-  char m_pname[256]; /*program name*/
+  char m_cmd[32];
+  char m_pname[32]; /*program name*/
   char m_iname[32];  /*name of the interface*/
   bool m_smac_cmd;
   uint8_t m_smac[6];

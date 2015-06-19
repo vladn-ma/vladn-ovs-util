@@ -43,12 +43,12 @@ uint32_t packet1 (
 
   if (_buf == NULL || _smac == NULL || _dmac == NULL) {
      fprintf (stderr, "error: packet1() buf or _smac or _dmac argument is NULL\n");
-     exit (11);
+     exit (21);
   }
 
   if (_len < (sizeof(struct ether_header) +  sizeof(struct iphdr) +  sizeof(struct udphdr) + 4)) {
       fprintf (stderr, "error: packet1() argument len is too short\n");
-     exit (11);
+     exit (21);
   }
 
   /*clean*/

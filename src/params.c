@@ -13,6 +13,7 @@
 #include <string.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
+#include <libgen.h>
 
 #include "params.h"
 
@@ -40,7 +41,7 @@ params *params__init (params* _p, int _argc, char **_argv)
     {"dip",       required_argument, 0, 'j'},
     {0,           0,           0, 0  }
   };
-  char *optstring = "vhc:e:s:d:i:j";
+  char *optstring = "vhc:e:s:d:i:j:";
   
   int c, i, t[6];
 
@@ -50,8 +51,9 @@ params *params__init (params* _p, int _argc, char **_argv)
 
   memset(_p, 0, sizeof(*_p));
 
+  strncpy (_p->m_pname, basename (_argv[0]), sizeof (_p->m_pname));
+  
   strncpy (_p->m_cmd,   "help",   sizeof (_p->m_cmd));  
-  strncpy (_p->m_pname, _argv[0], sizeof (_p->m_pname));
   strncpy (_p->m_iname, "eth0",   sizeof (_p->m_iname));
   _p->m_smac_cmd = false;
   _p->m_dmac_cmd = false;
@@ -69,34 +71,38 @@ params *params__init (params* _p, int _argc, char **_argv)
     case 'e': strncpy (_p->m_iname, optarg, sizeof (_p->m_iname)); break;
     case 's':
       if (sscanf(optarg, "%02x:%02x:%02x:%02x:%02x:%02x", &t[0], &t[1], &t[2], &t[3], &t[4], &t[5]) != 6) {
-          perror("smac format");
-	  exit (12);
+          perror("error: smac format");
+	  exit (31);
       } else {
 	_p->m_smac_cmd = true;
 	for (i=0; i<sizeof (_p->m_smac); i++) _p->m_smac[i] = t[i];
       }
+      break;
     case 'd':
       if (sscanf(optarg, "%02x:%02x:%02x:%02x:%02x:%02x", &t[0], &t[1], &t[2], &t[3], &t[4], &t[5]) != 6) {
-          perror("dmac format");
-	  exit (13);
+          perror("error: dmac format");
+	  exit (32);
       } else {
 	_p->m_dmac_cmd = true;
 	for (i=0; i<sizeof (_p->m_dmac); i++) _p->m_dmac[i] = t[i];
       }
+      break;
     case 'i':
       if (inet_aton(optarg, &_p->m_sip) == 0) {
-          perror("sip format");
-	  exit (14);
+          perror("error: sip format");
+	  exit (33);
       } else {
 	_p->m_sip_cmd = true;
       }
+      break;
     case 'j':
       if (inet_aton(optarg, &_p->m_dip) == 0) {
-          perror("dip format");
-	  exit (15);
+          perror("error: dip format");
+    	  exit (34);
       } else {
-	_p->m_dip_cmd = true;
+    	_p->m_dip_cmd = true;
       }
+      break;
     default:  break;
     }
   }
@@ -173,6 +179,7 @@ void params__test (int _argc, char **_argv)
 {
   printf("\n--beg params__test--");
   params *p = params__init (params__alloc(), _argc, _argv);
+  printf ("\n--------------------\n");
   params__info(p);
   params__free(params__destroy(p));
   printf("\n--end params__test--\n");
