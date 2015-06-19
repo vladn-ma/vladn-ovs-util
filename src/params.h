@@ -15,6 +15,7 @@
 
 typedef struct params__ {
   char m_cmd[32];
+  char m_protocol[32];
   char m_pname[32]; /*program name*/
   char m_iname[32];  /*name of the interface*/
   bool m_smac_cmd;

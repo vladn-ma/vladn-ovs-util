@@ -2,12 +2,12 @@
   06/11/15 12:43
   vladn
   
-  packet1.c
-  implementation of packet 1 generator
+  packet_udp.c
+  implementation of packet generator
   generates packet eth+ip+udp
 */
 
-#include "packet1.h"
+#include "packet_udp.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -24,7 +24,7 @@
 
 static uint16_t csum(uint16_t *buf, uint32_t nwords);
 
-uint32_t packet1 (
+uint32_t packet_udp (
 		  uint8_t *_buf,
 		  uint32_t _len,
 		  uint8_t *_smac,
@@ -42,12 +42,12 @@ uint32_t packet1 (
   /*validate arguments*/
 
   if (_buf == NULL || _smac == NULL || _dmac == NULL) {
-     fprintf (stderr, "error: packet1() buf or _smac or _dmac argument is NULL\n");
+     fprintf (stderr, "error: packet_udp() buf or _smac or _dmac argument is NULL\n");
      exit (21);
   }
 
   if (_len < (sizeof(struct ether_header) +  sizeof(struct iphdr) +  sizeof(struct udphdr) + 4)) {
-      fprintf (stderr, "error: packet1() argument len is too short\n");
+      fprintf (stderr, "error: packet_udp() argument len is too short\n");
      exit (21);
   }
 

@@ -16,7 +16,8 @@
 #include <netinet/in.h>
 #include <netinet/ether.h>
 
-#include "packet1.h"
+#include "packet_eth.h"
+#include "packet_udp.h"
 #include "send_wire.h"
 
 void send_wire (params *_par) 
@@ -48,7 +49,7 @@ void send_wire (params *_par)
       exit (12);
     }
     printf ("src interface index = %d\n", if_idx.ifr_ifindex);
-
+   
     if (_par->m_smac_cmd != true) {
       /*get the MAC address of the interface to send on*/
       memset(&if_mac, 0, sizeof(struct ifreq));
@@ -63,23 +64,27 @@ void send_wire (params *_par)
     for (i=0; i<4; i++) printf ("%s%x", (i?":":""), _par->m_smac[i]);
     printf ("\n");
 
-
     if (_par->m_sip_cmd != true) {
       /*get the IP address of the interface to send on*/
       memset(&if_ip, 0, sizeof(struct ifreq));
       strncpy(if_ip.ifr_name, _par->m_iname, IFNAMSIZ-1);
       if (ioctl(sockfd, SIOCGIFADDR, &if_ip) < 0) {
 	perror("SIOCGIFADDR");
-	exit (14);
+	/* if we cannot get ip address, it is not an error: it maybe not set for the interface
+	   exit (14);*/
       }
       _par->m_sip = ((struct sockaddr_in *)&if_ip.ifr_addr)->sin_addr;
     }
     printf ("src interface ip = %s\n", inet_ntoa(_par->m_sip));
 
     /*generate packet*/
-    tx_len = packet1 (sendbuf, sizeof (sendbuf), _par->m_smac, _par->m_dmac, (uint32_t)_par->m_sip.s_addr, (uint32_t)_par->m_dip.s_addr);
-
-
+    if (!strcmp (_par->m_protocol, "eth")) {
+      tx_len = packet_eth (sendbuf, sizeof (sendbuf), _par->m_smac, _par->m_dmac);
+    } else if  (!strcmp (_par->m_protocol, "udp")) {
+      tx_len = packet_udp (sendbuf, sizeof (sendbuf), _par->m_smac, _par->m_dmac,
+			(uint32_t)_par->m_sip.s_addr, (uint32_t)_par->m_dip.s_addr);
+    }
+    
     /*send the raw Ethernet packet*/
     socket_address.sll_ifindex = if_idx.ifr_ifindex;
     socket_address.sll_halen = ETH_ALEN;
