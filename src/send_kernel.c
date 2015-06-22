@@ -18,9 +18,9 @@
 
 #include "packet_eth.h"
 #include "packet_udp.h"
-#include "send_wire.h"
+#include "send_kernel.h"
 
-void send_wire (params *_par) 
+void send_kernel (params *_par) 
 {
   int i;
   int sockfd;
@@ -31,7 +31,7 @@ void send_wire (params *_par)
   uint8_t sendbuf[1024];
   struct sockaddr_ll socket_address;
 
-  printf ("\nsend_wire beg\n");
+  printf ("\nsend_kernel beg\n");
   /* printf ("\ncmd = %s\n", _par->m_cmd); */
 
   /*open RAW socket to send on*/
@@ -97,19 +97,14 @@ void send_wire (params *_par)
   params__info (_par);
 
   /*send packet */
-  if (sendto(
-	     sockfd,
-	     sendbuf,
-	     tx_len,
-	     0,
-	     (struct sockaddr*)&socket_address, sizeof(struct sockaddr_ll)
-	     ) < 0) {
+  if (sendto (sockfd, sendbuf, tx_len, 0,
+	      (struct sockaddr*)&socket_address, sizeof(struct sockaddr_ll)) < 0) {
     printf("Send failed\n");
     exit (15);
   } else {
     printf ("\nsend OK");
   }
 
-  printf ("\n\nsend_wire end\n");
+  printf ("\n\nsend_kernel end\n");
 }
 

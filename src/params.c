@@ -144,7 +144,7 @@ void params__print_help (params *_p)
   printf ("\n  %s [options]", _p->m_pname);
   printf ("\noptions:");
   printf ("\n  -h || --help                /*print short help then exit*/");
-  printf ("\n  -c || --cmd                 /*command: help, send_wire, receive_wire, send_kernel, receive_kernel, default: help*/");
+  printf ("\n  -c || --cmd                 /*command: help, send_kernel, send_wire, default: help*/");
   printf ("\n  -p || --protocol            /*protocol: eth, udp;  default: eth*/");
   printf ("\n  -e || --iname INAME         /*name of interface from which to send packet, default is \"eth0\"*/");
   printf ("\n  -n || --iname INUM          /*number of interface from which to send packet, default is \"2\" (usualy it is eth0)*/");

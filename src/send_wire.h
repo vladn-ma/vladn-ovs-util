@@ -2,13 +2,13 @@
   06/11/22 12:47
   vladn
 
-  tuntap.h 
-  header file for tuntap support
+  send_wire.h 
+  header file for send_wire support
 */
 
-#ifndef __tuntap_h___DEFINED__
-#define __tuntap_h___DEFINED__
+#ifndef __send_wire_h___DEFINED__
+#define __send_wire_h___DEFINED__
 
+void send_wire (params *_par);
 
-
-#endif /*__tuntap_h___DEFINED__*/
+#endif /*__send_wire_h___DEFINED__*/

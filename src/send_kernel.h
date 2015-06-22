@@ -2,17 +2,17 @@
   06/11/15 12:43
   vladn
 
-  send_wire.h 
-  header file for the main send_wire program
+  send_kernel.h 
+  header file for the main send_kernel program
   
-  send_wire program send and receive file to the interface both given by command line
+  send_kernel program send packet to the interface from the kernel side
 */
 
-#ifndef __send_wire_h__DEFINED__
-#define __send_wire_h__DEFINED__
+#ifndef __send_kernel_h__DEFINED__
+#define __send_kernel_h__DEFINED__
 
 #include "params.h"
 
-void send_wire (params *par);
+void send_kernel (params *par);
 
-#endif /*__send_wire_h__DEFINED__*/
+#endif /*__send_kernel_h__DEFINED__*/
