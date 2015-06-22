@@ -28,18 +28,17 @@
 
 void send_wire (params *_par)
 {
-  int i;
+  /* int i; */
   int tap_fd;
   struct ifreq ifr;
   char *clonedev = "/dev/net/tun";
   uint32_t tx_len = 0;
   uint8_t sendbuf[1024];
-  struct sockaddr_ll socket_address;
+  /* struct sockaddr_ll socket_address; */
    
   printf ("\nsend_wire beg\n");
   /* printf ("\ncmd = %s\n", _par->m_cmd); */
-
-  
+ 
   /*allocates or reconnects to a tun/tap device*/ 
   if( (tap_fd = open(clonedev , O_RDWR)) < 0 ) {
     perror("Opening /dev/net/tun");
@@ -53,7 +52,6 @@ void send_wire (params *_par)
   if( ioctl(tap_fd, TUNSETIFF, (void *)&ifr) < 0 ) {
     perror("ioctl(TUNSETIFF)");
     close(tap_fd);
-    perror("error connecting to tun/tap interface");
     exit(52);
   }
 
@@ -67,25 +65,13 @@ void send_wire (params *_par)
     tx_len = packet_udp (sendbuf, sizeof (sendbuf), _par->m_smac, _par->m_dmac,
 			 (uint32_t)_par->m_sip.s_addr, (uint32_t)_par->m_dip.s_addr);
   }
-    
-  /*send the raw Ethernet packet*/
-  socket_address.sll_ifindex = _par->m_inum;
-  socket_address.sll_halen = ETH_ALEN;
-  for (i=0; i< sizeof (_par->m_dmac); i++) socket_address.sll_addr[i] = _par->m_dmac[i];
 
-  /*print last message before sending*/
-  printf ("\nsending packet with following parameters");
-  params__info (_par);
-
-  /*send packet */
-  if (sendto (tap_fd, sendbuf, tx_len, 0,
-	      (struct sockaddr*)&socket_address, sizeof(struct sockaddr_ll)) < 0) {
-    printf("Send failed\n");
-    exit (55);
-  } else {
-    printf ("\nsend OK");
+  if (write(tap_fd, sendbuf, tx_len) < tx_len) {
+    perror("error of cwrite to the tap");
+    close(tap_fd);
+    exit(53);
   }
-
+    
   printf ("\n\nsend_wire end\n");  
 }
 

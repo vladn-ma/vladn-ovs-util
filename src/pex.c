@@ -6,12 +6,13 @@
   source file for the main ethsr program
 */
 
+#include "stdio.h"
+#include "string.h"
+
 #include "pex.h"
 #include "params.h"
 #include "send_kernel.h"
-
-#include "stdio.h"
-#include "string.h"
+#include "send_wire.h"
 
 int main (int argc, char **argv) 
 {  
@@ -26,7 +27,9 @@ int main (int argc, char **argv)
   } else {
     if (!strcmp (par.m_cmd, "send_kernel")) {
       send_kernel (&par);
-    }
+    } else  if (!strcmp (par.m_cmd, "send_wire")) {
+      send_wire (&par);
+    } 
   }
 
   printf ("\nethsr end\n");
