@@ -35,14 +35,15 @@ params *params__init (params* _p, int _argc, char **_argv)
     {"help",      no_argument,       0, 'h'},
     {"cmd",       required_argument, 0, 'c'},    
     {"protocol",  required_argument, 0, 'p'},    
-    {"interface", required_argument, 0, 'e'},
+    {"iname",     required_argument, 0, 'e'},
+    {"inum",      required_argument, 0, 'n'},
     {"smac",      required_argument, 0, 's'},
     {"dmac",      required_argument, 0, 'd'},
     {"sip",       required_argument, 0, 'i'},
     {"dip",       required_argument, 0, 'j'},
     {0,           0,           0, 0  }
   };
-  char *optstring = "vhc:p:e:s:d:i:j:";
+  char *optstring = "vhc:p:e:n:s:d:i:j:";
   
   int c, i, t[6];
 
@@ -58,6 +59,8 @@ params *params__init (params* _p, int _argc, char **_argv)
   strncpy (_p->m_protocol, "eth",  sizeof (_p->m_protocol));  
   strncpy (_p->m_iname,    "eth0", sizeof (_p->m_iname));
   _p->m_smac_cmd = false;
+  _p->m_iname_cmd = false;
+  _p->m_inum_cmd = false;
   _p->m_dmac_cmd = false;
   _p->m_sip_cmd = false;
   _p->m_dip_cmd = false;
@@ -71,40 +74,38 @@ params *params__init (params* _p, int _argc, char **_argv)
     case 'h': strncpy (_p->m_cmd, "help", sizeof (_p->m_cmd)); break;
     case 'c': strncpy (_p->m_cmd, optarg, sizeof (_p->m_cmd)); break;
     case 'p': strncpy (_p->m_protocol, optarg, sizeof (_p->m_protocol)); break;
-    case 'e': strncpy (_p->m_iname, optarg, sizeof (_p->m_iname)); break;
+    case 'e': strncpy (_p->m_iname, optarg, sizeof (_p->m_iname)); _p->m_iname_cmd = true; break;
+    case 'n': _p->m_inum = atoi (optarg); _p->m_inum_cmd = true; break;
     case 's':
       if (sscanf(optarg, "%02x:%02x:%02x:%02x:%02x:%02x", &t[0], &t[1], &t[2], &t[3], &t[4], &t[5]) != 6) {
-          perror("error: smac format");
-	  exit (31);
-      } else {
-	_p->m_smac_cmd = true;
-	for (i=0; i<sizeof (_p->m_smac); i++) _p->m_smac[i] = t[i];
+	perror("error: smac format");
+	exit (31);
       }
+      _p->m_smac_cmd = true;
+      for (i=0; i<sizeof (_p->m_smac); i++) _p->m_smac[i] = t[i];
       break;
     case 'd':
       if (sscanf(optarg, "%02x:%02x:%02x:%02x:%02x:%02x", &t[0], &t[1], &t[2], &t[3], &t[4], &t[5]) != 6) {
-          perror("error: dmac format");
-	  exit (32);
-      } else {
-	_p->m_dmac_cmd = true;
-	for (i=0; i<sizeof (_p->m_dmac); i++) _p->m_dmac[i] = t[i];
-      }
+	perror("error: dmac format");
+	exit (32);
+      } 
+      _p->m_dmac_cmd = true;
+      for (i=0; i<sizeof (_p->m_dmac); i++) _p->m_dmac[i] = t[i];
       break;
     case 'i':
       if (inet_aton(optarg, &_p->m_sip) == 0) {
-          perror("error: sip format");
-	  exit (33);
+	perror("error: sip format");
+	exit (33);
       } else {
 	_p->m_sip_cmd = true;
       }
       break;
     case 'j':
       if (inet_aton(optarg, &_p->m_dip) == 0) {
-          perror("error: dip format");
-    	  exit (34);
-      } else {
-    	_p->m_dip_cmd = true;
-      }
+	perror("error: dip format");
+	exit (34);
+      } 
+      _p->m_dip_cmd = true;
       break;
     default:  break;
     }
@@ -132,13 +133,6 @@ void params__free (params* _p)
   return ;
 }
 
-void params__print_version (params *_p)
-{
-  assert (_p != NULL);
-  assert (_p->m_pname != NULL);
-
-}
-
 void params__print_help (params *_p)
 {
   assert (_p!=NULL);
@@ -149,16 +143,17 @@ void params__print_help (params *_p)
   printf ("\nusage:");
   printf ("\n  %s [options]", _p->m_pname);
   printf ("\noptions:");
-  printf ("\n  -h || --help /*print short help then exit*/");
-  printf ("\n  -c || --cmd  /*command: help, send_wire_eth,  send_wire_udp, receive_wire, send_kernel, receive_kernel, default: help*/");
-  printf ("\n  -p || --protocol  /*protocol: eth, udp;  default: eth*/");
-  printf ("\n");
-  printf ("\n  -e || --interface INTERFACE /*interface from which to send packet, default is \"eth0\"*/");
+  printf ("\n  -h || --help                /*print short help then exit*/");
+  printf ("\n  -c || --cmd                 /*command: help, send_wire, receive_wire, send_kernel, receive_kernel, default: help*/");
+  printf ("\n  -p || --protocol            /*protocol: eth, udp;  default: eth*/");
+  printf ("\n  -e || --iname INAME         /*name of interface from which to send packet, default is \"eth0\"*/");
+  printf ("\n  -n || --iname INUM          /*number of interface from which to send packet, default is \"2\" (usualy it is eth0)*/");
   printf ("\n  -s || --smac NN:NN:NN:NN:NN /*source mac address, default: will try to get it from intervace*/");
   printf ("\n  -d || --dmac NN:NN:NN:NN:NN /*destanation mac address, default is \"00:00:00:00:00:00\"*/");
   printf ("\n  -i || --sip M.M.M.M         /*source ip address, default: will try to get it from intervace*/");
-  printf ("\n  -i || --dip M.M.M.M         /*destanation ip address, default is \"0.0.0.0\"*/");
-  printf ("\nif no arguments, then default values are used");
+  printf ("\n  -j || --dip M.M.M.M         /*destanation ip address, default is \"0.0.0.0\"*/");
+  printf ("\n  if no arguments, then default values are used");
+  printf ("\n  if inum is given in command line, iname or smac,sip should be given too");
   printf ("\n");
 }
 
@@ -169,7 +164,10 @@ void params__info (params *_p)
   printf ("\n_p->m_cmd      = %s", _p->m_cmd);
   printf ("\n_p->m_protocol = %s", _p->m_protocol);
   printf ("\n_p->m_pname    = %s", _p->m_pname);
+  printf ("\n_p->m_iname_cmd= %s", ((_p->m_iname_cmd==true)?"true":"false"));
   printf ("\n_p->m_iname    = %s", _p->m_iname);
+  printf ("\n_p->m_inum_cmd = %s", ((_p->m_inum_cmd==true)?"true":"false"));
+  printf ("\n_p->m_inum     = %d", (int)_p->m_inum);
   printf ("\n_p->m_smac_cmd = %s", ((_p->m_smac_cmd==true)?"true":"false"));
   printf ("\n_p->m_smac     = %02x:%02x:%02x:%02x:%02x:%02x", _p->m_smac[0], _p->m_smac[1], _p->m_smac[2], _p->m_smac[3], _p->m_smac[4], _p->m_smac[5]);
   printf ("\n_p->m_dmac_cmd = %s", ((_p->m_dmac_cmd==true)?"true":"false"));

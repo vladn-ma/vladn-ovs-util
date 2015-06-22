@@ -17,13 +17,22 @@ typedef struct params__ {
   char m_cmd[32];
   char m_protocol[32];
   char m_pname[32]; /*program name*/
-  char m_iname[32];  /*name of the interface*/
+
+  bool m_iname_cmd;
+  char m_iname[32]; /*name of the interface*/
+
+  bool m_inum_cmd;
+  uint16_t m_inum;
+  
   bool m_smac_cmd;
   uint8_t m_smac[6];
+  
   bool m_dmac_cmd;
   uint8_t m_dmac[6];
+  
   bool m_sip_cmd;
-  struct in_addr m_sip; 
+  struct in_addr m_sip;
+  
   bool m_dip_cmd;
   struct in_addr m_dip;
 } params;
@@ -39,7 +48,6 @@ void params__free (params* _p);
 void params__info (params *_p);
 
 /* class specific member functions */
-void params__print_version (params *_p);
 void params__print_help (params *_p);
 
 #endif /* __progparams_h___DEFINED__ */

@@ -1,18 +1,14 @@
 /*
-  06/11/15 12:43
+  06/11/22 12:47
   vladn
 
-  send_wire.h 
-  header file for the main send_wire program
-  
-  send_wire program send and receive file to the interface both given by command line
+  tuntap.h 
+  header file for tuntap support
 */
 
-#ifndef __send_wire_h__DEFINED__
-#define __send_wire_h__DEFINED__
+#ifndef __tuntap_h___DEFINED__
+#define __tuntap_h___DEFINED__
 
-#include "params.h"
 
-void send_wire (params *par);
 
-#endif /*__send_wire_h__DEFINED__*/
+#endif /*__tuntap_h___DEFINED__*/

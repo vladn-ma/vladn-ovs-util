@@ -22,7 +22,6 @@ int main (int argc, char **argv)
   printf ("\nethsr beg\n");
 
   if (!strncmp (par.m_cmd, "help", strlen ("help"))) {
-    params__print_version (&par);
     params__print_help (&par);
   } else {
     if (!strcmp (par.m_cmd, "send_wire")) {

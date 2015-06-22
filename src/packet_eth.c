@@ -47,19 +47,9 @@ uint32_t packet_eth (
   memset(_buf, 0, _len);
 
   /*ethernet header*/
-  eh->ether_shost[0] = _smac[0];
-  eh->ether_shost[1] = _smac[1];
-  eh->ether_shost[2] = _smac[2];
-  eh->ether_shost[3] = _smac[3];
-  eh->ether_shost[4] = _smac[4];
-  eh->ether_shost[5] = _smac[5];
-  eh->ether_dhost[0] = _dmac[0];
-  eh->ether_dhost[1] = _dmac[1];
-  eh->ether_dhost[2] = _dmac[2];
-  eh->ether_dhost[3] = _dmac[3];
-  eh->ether_dhost[4] = _dmac[4];
-  eh->ether_dhost[5] = _dmac[5];
-  eh->ether_type = htons(ETH_P_IP);
+  for (i=0; i<sizeof (eh->ether_shost); i++) eh->ether_shost[i] = _smac[i];
+  for (i=0; i<sizeof (eh->ether_dhost); i++) eh->ether_dhost[i] = _dmac[i];
+  eh->ether_type = htons(ETH_P_802_2);	/*0x0004 802.2 frames*/
   ind += sizeof(struct ether_header);
 
 
