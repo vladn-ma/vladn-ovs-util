@@ -46,7 +46,7 @@ void send_wire (params *_par)
   }
 
   memset(&ifr, 0, sizeof(ifr));
-  ifr.ifr_flags =  IFF_TAP | IFF_NO_PI;
+  ifr.ifr_flags =  IFF_TAP | IFF_NO_PI /* | IFF_MULTI_QUEUE */;
   strncpy(ifr.ifr_name, _par->m_iname, IFNAMSIZ);
 
   if( ioctl(tap_fd, TUNSETIFF, (void *)&ifr) < 0 ) {
@@ -54,6 +54,13 @@ void send_wire (params *_par)
     close(tap_fd);
     exit(52);
   }
+
+  /*set interface persistant*/
+  /* if(ioctl(tap_fd, TUNSETPERSIST, 0) < 0) { */
+  /*   perror("TUNSETPERSIST"); */
+  /*   close(tap_fd); */
+  /*   exit (53); */
+  /* }  */
 
   strcpy(_par->m_iname, ifr.ifr_name);
   printf("successfully connected to interface %s\n", _par->m_iname);
@@ -66,12 +73,18 @@ void send_wire (params *_par)
 			 (uint32_t)_par->m_sip.s_addr, (uint32_t)_par->m_dip.s_addr);
   }
 
+    /*print last message before sending*/
+  printf ("\nsending packet with following parameters");
+  params__info (_par);
+
   if (write(tap_fd, sendbuf, tx_len) < tx_len) {
-    perror("error of cwrite to the tap");
+    perror("error of write to the tap");
     close(tap_fd);
-    exit(53);
+    exit(54);
+  }else {
+    printf ("\nsend OK");
   }
-    
+
   printf ("\n\nsend_wire end\n");  
 }
 
