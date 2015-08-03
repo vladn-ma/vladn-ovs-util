@@ -73,7 +73,7 @@ void send_wire (params *_par)
 			 (uint32_t)_par->m_sip.s_addr, (uint32_t)_par->m_dip.s_addr);
   }
 
-    /*print last message before sending*/
+  /*print  message before sending*/
   printf ("\nsending packet with following parameters");
   params__info (_par);
 

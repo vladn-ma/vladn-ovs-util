@@ -14,7 +14,7 @@
 #include <netinet/in.h>
 
 typedef struct params__ {
-  char m_cmd[32];
+  char m_cmd[32];/*command name*/
   char m_protocol[32];
   char m_pname[32]; /*program name*/
 
